@@ -4,17 +4,18 @@ public class Main implements Runnable {
     public static final long PROCESSING_TIME = 5 * 1000;
 
     public static void main(String[] args) {
-        // Startup a single plant
-        Main p = new Main();
+        Main p = new Main(); //Starting Plant 1
+        Main p2 = new Main(); //Starting Plant 2
         p.startPlant();
-
+        
         // Give the plants time to do work
         try {
             Thread.sleep(PROCESSING_TIME);
         } catch (InterruptedException e) {
             System.err.println("errMsg");
         }
-
+        
+        
         // Stop the plant, and wait for it to shutdown
         p.stopPlant();
 
@@ -26,7 +27,7 @@ public class Main implements Runnable {
 
     public final int ORANGES_PER_BOTTLE = 4;
 
-    private final Thread thread;
+    private final Thread worker;
     private int orangesProvided;
     private int orangesProcessed;
     private volatile boolean timeToWork;
@@ -34,20 +35,20 @@ public class Main implements Runnable {
     Main(){
         orangesProvided = 0;
         orangesProcessed = 0;
-        thread = new Thread(this, "Plant");
+        worker = new Thread(this, "Plant");
     }
 
     public void startPlant() {
         timeToWork = true;
-        thread.start();
+        worker.start();
     }
 
     public void stopPlant() {
         timeToWork = false;
         try {
-            thread.join();
+            worker.join();
         } catch (InterruptedException e) {
-            System.err.println(thread.getName() + " stop malfunction");
+            System.err.println(worker.getName() + " stop malfunction");
         }
     }
 

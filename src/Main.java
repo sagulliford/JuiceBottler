@@ -1,26 +1,28 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Main implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
-
+    public List<String> p = new ArrayList<String>();//Creating Plants
+    
     public static void main(String[] args) {
-        Main p = new Main(); //Starting Plant 1
-        Main p2 = new Main(); //Starting Plant 2
-        p.startPlant();
-        
-        // Give the plants time to do work
-        try {
-            Thread.sleep(PROCESSING_TIME);
-        } catch (InterruptedException e) {
-            System.err.println("errMsg");
+        for(int i= 0; i< 2; i++){
+        	p.startPlant();
+        	 // Give the plants time to do work
+            try {
+                Thread.sleep(PROCESSING_TIME);
+            } catch (InterruptedException e) {
+                System.err.println("errMsg");
+            }
         }
-        
-        
-        // Stop the plant, and wait for it to shutdown
+         // Stop the plant, and wait for it to shutdown
         p.stopPlant();
 
         // Summarize the results
-        System.out.println("Total provided/processed = " + p.getProvidedOranges() + "/" + p.getProcessedOranges());
+        System.out.println("Total oranges fetched = " + p.getProvidedOranges() );
+        System.out.println("Total oranges proccessed = " + p.getProcessedOranges());
         System.out.println("Created " + p.getBottles() +
                            ", wasted " + p.getWaste() + " oranges");
     }
@@ -28,12 +30,12 @@ public class Main implements Runnable {
     public final int ORANGES_PER_BOTTLE = 4;
 
     private final Thread worker;
-    private int orangesProvided;
+    private int orangesFetched;
     private int orangesProcessed;
     private volatile boolean timeToWork;
 
     Main(){
-        orangesProvided = 0;
+        orangesFetched = 0;
         orangesProcessed = 0;
         worker = new Thread(this, "Plant");
     }
@@ -56,7 +58,7 @@ public class Main implements Runnable {
         System.out.print(Thread.currentThread().getName() + " Processing oranges");
         while (timeToWork) {
             processEntireOrange(new Worker());
-            orangesProvided++;
+            orangesFetched++;
             System.out.print(".");
         }
         System.out.println("");
@@ -70,7 +72,7 @@ public class Main implements Runnable {
     }
 
     public int getProvidedOranges() {
-        return orangesProvided;
+        return orangesFetched;
     }
 
     public int getProcessedOranges() {
